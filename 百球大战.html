@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        *{
+            margin:0;
+            padding:0;
+        }
+        canvas{
+            display: block;
+            margin:0 auto;
+            border:1px red solid;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas">
+        xxxxx
+    </canvas>
+
+    <script>
+        var canvas = document.querySelector("#canvas");
+        canvas.width = 800;
+        canvas.height = 600;
+
+        var onOff = false;
+        var ctx = canvas.getContext("2d");
+
+
+        function Arc(){
+            this.x = x;
+            this.y = y;
+            this.r = r;
+            this.color = color;
+            this.speedX = speedX;
+            this.speedY = speedY;
+        }
+        Arc.prototype.drawArc = function(){
+            ctx.save();
+            ctx.beginPath();
+            ctx.fillStyle = this.color;
+            ctx.arc(this.x,this.y,this.r,0,Math.PI*2)
+            ctx.fill();
+            ctx.closePath();
+            ctx.restore();
+        }
+        Arc.prototype.move = function(){
+            if(this.x+this.speedX+this.r > canvas.width || this.x+this.speedX-this.r < 0){
+                this.speedX = -this.speedX;
+            }
+            if(this.y+this.speedY+this.r > canvas.height || this.y+this.speedY-this.r < 0){
+
+                this.speedY = - this.speedY;
+            }
+            this.x += this.speedX;
+            this.y += this.speedY;
+        }
+
+        var arr = [];
+        for(let i = 0;i<100;i++){
+           var x = random(50,750);
+           var y = random(50,550);
+           var r = random(10,30);
+           var speedX = random(3,10);
+           var speedY = random(3,10);
+           var color = `rgb(${random(0,255)},${random(0,255)},${random(0,255)})`;
+           var obj = new Arc(x,y,r,color,speedX,speedY)
+            arr.push(obj);
+
+        }
+        var timer = null;
+        function ani(){
+            ctx.clearRect(0,0,canvas.width,canvas.height)
+            for(let i = 0;i<arr.length;i++){
+                arr[i].drawArc();
+                arr[i].move();
+            }
+            timer = window.requestAnimationFrame(ani);
+        }
+        ani();
+
+        document.onclick = function(){
+            onOff = !onOff;
+            if(onOff){
+                window.cancelAnimationFrame(timer);
+            }else{
+                ani();
+            }
+        }
+
+        function random(a,b){
+            return Math.ceil(Math.random() * (b-a)+a+1);
+        }
+    </script>
+
+
+</body>
+</html>
